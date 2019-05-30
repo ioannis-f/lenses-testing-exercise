@@ -1,0 +1,8 @@
+{
+  "baseUrl": "http://173.249.13.210:3030/",
+  "env": {
+    "username": "admin",
+    "password": "admin"
+  }
+
+}
