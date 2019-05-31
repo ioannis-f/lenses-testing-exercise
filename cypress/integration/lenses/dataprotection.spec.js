@@ -1,7 +1,7 @@
-// Added in order to be able to use keyboard tab. still in beta thought.
-//require('cypress-plugin-tab')
+// Added in order to be able to use keyboard tab. Beware it is still in beta. (Only for the scope of this exercise)
+require('cypress-plugin-tab')
 
-// Added in order to force cypress to stop after n error:
+// Added in order to force cypress to stop after an error:
 Cypress.on('fail', () => {
   Cypress.stop()
 })
@@ -16,7 +16,8 @@ describe.only("Data Protection", () => {
 
 
   context("Default Policies", () => {
-    it("I can navigate to the Policies page", () => {
+    it("I can check the default policies", () => {
+
       cy.get('.navbar a[href="/dataprotection/policies"]', { timeout: 20000 })
       .should("contain", "POLICIES")
       .click();
@@ -26,15 +27,15 @@ describe.only("Data Protection", () => {
       // HTML: <th class="sortable" style="width: 100px;">Category<span class="order-4"></span></th>
       //
       cy.get('th[class="sortable"]', { timeout: 20000 })
-      .should("contain", "Category")
-      ;
+      .should("contain", "Category");
 
     });
   });
 
 
   context("Policy Creation", () => {
-    it("I can navigate to the Policies page", () => {
+    it("I can create a new policy", () => {
+
       cy.get('.navbar a[href="/dataprotection/policies"]', { timeout: 20000 })
       .should("contain", "POLICIES")
       .click();
@@ -50,16 +51,13 @@ describe.only("Data Protection", () => {
       // HTML: <input class="form-control" type="text" placeholder=" Filter policies...">
       // 
       cy.get('input[class="form-control"]', { timeout: 20000 })
-      //.should("contain", "Filter policies")
-      .type("TestLenses")
-      ;
+      .type("TestLenses");
       // 
       // Check if policy named "TestLenses" is not present
       // HTML: <a href="/dataprotection/policies/details/213e67d8-3905-4f01-a1e3-fee4e17da890">TestLenses</a>
       //
       cy.get("a")
-      .should("not.contain", "TestLenses")
-      ;
+      .should("not.contain", "TestLenses");
 
       // 
       // Open the "Add New Policy" form
@@ -84,19 +82,19 @@ describe.only("Data Protection", () => {
       // 
       // Type into "Category" field
       // HTML: <div class="lenses-creatable-autocomplete__input" style="display: inline-block;"><input autocapitalize="none" autocomplete="off" autocorrect="off" id="react-select-6-input" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" value="" style="box-sizing: content-box; width: 2px; background: 0px center; border: 0px; font-size: inherit; opacity: 1; outline: 0px; padding: 0px; color: inherit;"><div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 13px; font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, Roboto, sans-serif, FontAwesome; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;"></div></div>
+      //
       cy.get("#react-select-2-input", { timeout: 20000 })           
       // Check autocomplete functionality
       .type("PI{enter}", { force:true })
       // Without checking autocomplete:
-      //.type("Address{enter}", { force:true })
+      //.type("PII{enter}", { force:true })
       ;
       
       // 
-      // Selct "Impact"
+      // Select "Impact"
       // 
       cy.get("#impactType")
       .select("HIGH");
-      ;
 
       // 
       // Type in "Add a field"
@@ -105,17 +103,16 @@ describe.only("Data Protection", () => {
       cy.get(".react-tagsinput-input")
       .should("contain", "Add a field" )
       .find("input")
-      .type("TestField")
-      ;
+      .type("TestField");
 
-      // In order to enable "Save" Button
+      // I use the following to enable "Save" Button
       cy.get("#name")
       .click()
-      .click()
+      .tab().tab().tab().tab()
       ;
 
-      cy.wait(2000); // *** 
-//cy.pause();
+      cy.wait(2000); 
+      //cy.pause();
 
       // 
       // Fire "save" button
@@ -123,14 +120,13 @@ describe.only("Data Protection", () => {
       // 
       cy.get('button[class="btn btn-secondary btn-policy float-right mx-2 btn-success"]')
       .should("contain", "Save" )
-      .click()
-      ;
+      .click();
 
       cy.wait(2000);
 
       cy.get(".navbar", { timeout: 20000 }).should("exist");    // ***
 
-//cy.pause();
+      //cy.pause();
 
       // 
       // Confirm that policy was created
@@ -139,22 +135,20 @@ describe.only("Data Protection", () => {
       // HTML: <input class="form-control" type="text" placeholder=" Filter policies...">
       //
       cy.get('input[class="form-control"]', { timeout: 20000 })
-      .type("TestLenses")
-      ;
+      .type("TestLenses");
       // 
       // Check if policy named "TestLenses" is present
       // HTML: <a href="/dataprotection/policies/details/213e67d8-3905-4f01-a1e3-fee4e17da890">TestLenses</a>
       //
       cy.get("a")
       .should("exist");
-      ;
-      
     });
   });
 
 
   context("Policy Deletion", () => {
-    it("I can navigate to the Policies page", () => {
+    it("I can delete a policy", () => {
+
       cy.get('.navbar a[href="/dataprotection/policies"]', { timeout: 20000 })
       .should("contain", "POLICIES")
       .click();
@@ -164,26 +158,23 @@ describe.only("Data Protection", () => {
       // HTML: <input class="form-control" type="text" placeholder=" Filter policies...">
       // 
       cy.get('input[class="form-control"]', { timeout: 20000 })
-      .type("TestLenses")
-      ;
+      .type("TestLenses");
       
       // 
       // Click delete policy
       // HTML: <a href="#" class="text-danger p-1 text-lg"><i icon="trash" class="fa f fa-trash " aria-hidden="true"></i></a>
       // 
       cy.get('a[class="text-danger p-1 text-lg"]', { timeout: 20000 }) // 
-      .click()
-      ;
+      .click();
 
-//cy.pause();
+      //cy.pause();
 
       // 
       // Confirm to delete policy
       // 
       // HTML: <button type="button" class="btn btn-danger"><i icon="trash" class="fa f fa-trash mr-2" aria-hidden="true"></i>Delete</button>
       cy.get('button[class="btn btn-danger"]')
-      .click()
-      ;
+      .click();
 
       cy.wait(3000);  // ***
     });
@@ -191,7 +182,8 @@ describe.only("Data Protection", () => {
 
 
   context("Policy Deletion confirmation", () => {
-    it("I can navigate to the Policies page", () => {
+    it("I can confirm that the policy is deleted", () => {
+
       cy.get('.navbar a[href="/dataprotection/policies"]', { timeout: 20000 })
       .should("contain", "POLICIES")
       .click();
@@ -203,20 +195,14 @@ describe.only("Data Protection", () => {
       // HTML: <input class="form-control" type="text" placeholder=" Filter policies...">
       // 
       cy.get('input[class="form-control"]', { timeout: 20000 })
-      .type("TestLenses")
-      ;
+      .type("TestLenses");
       // 
       // Check if policy named "TestLenses" is not present
       // HTML: <a href="/dataprotection/policies/details/213e67d8-3905-4f01-a1e3-fee4e17da890">TestLenses</a>
       //
       cy.get("a")
-      .should("not.contain", "TestLenses")
-      ;
-
+      .should("not.contain", "TestLenses");
     });
   });
 
-
 });
-
-
